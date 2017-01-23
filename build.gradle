@@ -16,6 +16,24 @@ allprojects {
     repositories {
         jcenter()
     }
+    apply plugin: 'checkstyle'
+    checkstyle {
+        // assign the latest plugin version explicitly
+        // default version is very old, likes 5.9
+        toolVersion = '7.4'
+    }
+    task checkstyle(type: Checkstyle) {
+        // rules.xml copy from:
+        // https://raw.githubusercontent.com/checkstyle/checkstyle/checkstyle-7.4/src/main/resources/google_checks.xml
+        // the version should be as same as plugin version
+        configFile new File(rootDir, "config/checkstyle/rules.xml")
+        source 'src'
+        include '**/*.java'
+        exclude '**/gen/**'
+        exclude '**/R.java'
+        exclude '**/BuildConfig.java'
+        classpath = files()
+    }
 }
 
 task clean(type: Delete) {
