@@ -27,6 +27,8 @@ allprojects {
         // https://raw.githubusercontent.com/checkstyle/checkstyle/checkstyle-7.4/src/main/resources/google_checks.xml
         // the version should be as same as plugin version
         configFile new File(rootDir, "config/checkstyle/rules.xml")
+        configProperties.checkstyleSuppressionPath =
+                new File(rootDir, "config/checkstyle/suppressions.xml").absolutePath
         source 'src'
         include '**/*.java'
         exclude '**/gen/**'
