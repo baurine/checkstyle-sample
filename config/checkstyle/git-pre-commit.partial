@@ -1,0 +1,12 @@
+# 1. rename `.git/hooks/pre-commit.sample` to `.git/hooks/pre-commit`
+# 2. copy and paste following code to `pre-commit`, after the first paragraph code, except the comment
+
+SCRIPT_DIR=$(dirname "$0")
+SCRIPT_ABS_PATH=`cd "$SCRIPT_DIR"; pwd`
+$SCRIPT_ABS_PATH/../../gradlew checkstyle
+if [ $? -eq 0   ]; then
+    echo "checkstyle OK"
+else
+    exit 1
+fi
+
