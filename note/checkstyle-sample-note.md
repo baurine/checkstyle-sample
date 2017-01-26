@@ -1,10 +1,13 @@
 # Using checkstyle in Android Studio
 
-[Checkstyle](http://checkstyle.sourceforge.net/) is a tool to help you check your Java code (just Java) style. We want to use it to help us to check the Android project code style before run and commit to git. It has many plugins for different IDE and build tool, here we use its gradle plugin.
+[Checkstyle](http://checkstyle.sourceforge.net/) is a tool to help you check your Java code (only Java) style. We want to use it to help us to check the Android project code style before run and commit to git. It has many plugins for different IDE and build tool, here we use its gradle plugin.
 
-## Reference
+## References
 
-1. [Android代码规范利器： Checkstyle](http://droidyue.com/blog/2016/05/22/use-checkstyle-for-better-code-style/index.html)
+### Chinese
+1. [Android代码规范利器：Checkstyle](http://droidyue.com/blog/2016/05/22/use-checkstyle-for-better-code-style/index.html)
+
+### English
 1. [How to improve quality and syntax of your Android code](http://vincentbrison.com/2014/07/19/how-to-improve-quality-and-syntax-of-your-android-code/)
 1. [Using the Gradle Checkstyle Plugin for Code Style Reporting](https://www.youtube.com/watch?v=zo3zyyo7Vkw)
 
@@ -12,7 +15,7 @@
 
 ### Step 1 - Apply Plugin
 
-At first, we apply the checkstyle plugin in project's `build.gradle`:
+Apply the checkstyle plugin in project's `build.gradle`:
 
     allprojects {
         repositories {
@@ -38,15 +41,17 @@ At first, we apply the checkstyle plugin in project's `build.gradle`:
         }
     }
 
-- notice, we'd better to assign the checkstyle version explicitly by `checkstyle` method, else it will use the default version, and default version is very old, when I test, it is 5.9, and latest version is 7.4.
-- then, we copy the corresponding code style rules from checkstyle repo in github, we follow google style, so we copy `google_checks.xml`, and put it in our project folder, likes `config/checkstyle/rules.xml`.
-- we define a task called `checkstyle`, config the `rules.xml` path, files need to check, files don't need to check, especially the auto-generated files.
+1. It's better to assign the checkstyle version explicitly using `checkstyle` method, otherwise it will use an old version (5.9 at time of writing) as opposed to the latest one (7.4 at time of writing).
+1. Copy the corresponding code style rules from checkstyle repo in github (`google_checks.xml`), and put it in the project folder (`config/checkstyle/rules.xml`).
+1. Define a task called `checkstyle`.
+1. Configure the `rules.xml` path.
+1. Set which files need to be checked and which don't (auto-generated files).
 
-default plugin checkstyle version:
+Default plugin checkstyle version:
 
 ![](./art/1_plguin_default_version.png)
 
-then, we can use `./gradlew checkstyle` command in console to execute this task for code style check:
+Now you can check syntax in console using the `./gradlew checkstyle` command:
 
     > ./gradlew checkstyle
     Incremental java compilation is an incubating feature.
@@ -84,15 +89,15 @@ then, we can use `./gradlew checkstyle` command in console to execute this task 
 
     Total time: 34.944 secs
 
-So many warning!
+So many warnings!
 
 ### Step 2 - Modify Severity
 
-Although we get so many warnings, the project still build successfully, that's not exactly what we want. We want to it build failed if code style check doesn't pass. So we comment the `warning` level `severity` property in `rules.xml`, then the `severity` value will be defalut `error`:
+Although there are so many warnings, the project still builds successfully but that's not exactly what we want. We want the build to fail if the code style check doesn't pass. So we comment the `warning` level `severity` property in `rules.xml`.
 
     <!--<property name="severity" value="warning"/>-->
 
-Run `./gradlew checkstyle` again, now it is failed:
+Run `./gradlew checkstyle` again and now it fails:
 
     > ./gradlew checkstyle
     Incremental java compilation is an incubating feature.
@@ -115,13 +120,13 @@ Run `./gradlew checkstyle` again, now it is failed:
 
 ### Step 3 - Modify Indentation Rule
 
-In the above output, we saw many errors aboutn 'Indentation', it said it should be '2' or '4', not '4' or '8'. The default indentation in Android Studio is '4' or '8', and we really want to use this config.
+There are many errors about 'Indentation' (it should be '2' or '4', not '4' or '8'). The default indentation in Android Studio is '4' or '8' and we should use this configuration.
 
-We can see the default code style in Android Studio in Preference (In fact, I am very curious about that can we export the Android Studio default codey style for checkstyle):
+You can see the default code style in Android Studio in Preferences
 
 ![](./art/2_indentation.png)
 
-So we modify the 'Indentation' rule in `rules.xml`, change `2` to `4`, and `4` to `8`:
+Modify the 'Indentation' rule in `rules.xml` by changing `2` to `4`, and `4` to `8`:
 
         <module name="Indentation">
             <property name="basicOffset" value="4"/>
@@ -132,7 +137,7 @@ So we modify the 'Indentation' rule in `rules.xml`, change `2` to `4`, and `4` t
             <property name="arrayInitIndent" value="4"/>
         </module>
 
-Then we run `./gradlew checkstyle` again, 'Indentation' error disppeared:
+Then run `./gradlew checkstyle` again and 'Indentation' error have disppeared:
 
     > ./gradlew checkstyle
     Incremental java compilation is an incubating feature.
@@ -149,7 +154,7 @@ Then we run `./gradlew checkstyle` again, 'Indentation' error disppeared:
 
 ### Step 4 - Config Suppression
 
-In the above output, still has some errors come from those auto-generated files, and we won't modify it at all, don't care about them.  So we need to tell checkstyle not to check these files. We already used `exclude` grammar in task `checkstyle` before, but `suppressions` can control more details. We create `suppressions.xml` in `config/checkstyle` folder (in fact this file copys from [vincentbrison/vb-android-app-quality](https://github.com/vincentbrison/vb-android-app-quality)):
+The are still has some errors coming from auto-generated files but these files don't need to be checked for code style so tell checkstyle not to check these files. We already used the `exclude` grammar, but `suppressions` can control more details. Create `suppressions.xml` in `config/checkstyle` folder (copied from [vincentbrison/vb-android-app-quality](https://github.com/vincentbrison/vb-android-app-quality)):
 
     <?xml version="1.0"?>
     <!DOCTYPE suppressions PUBLIC
@@ -163,7 +168,7 @@ In the above output, still has some errors come from those auto-generated files,
         <suppress checks="[a-zA-Z0-9]*" files=".*_MembersInjector.java" />
     </suppressions>
 
-And we modify `build.gradle` to define a varaible to save the `suppressions.xml` path, its value will be used in `rules.xml`:
+And modify `build.gradle` to define a varaible to save the `suppressions.xml` path.  Its value will be used in `rules.xml`:
 
     task checkstyle(type: Checkstyle) {
         configFile new File(rootDir, "config/checkstyle/rules.xml")
@@ -172,7 +177,7 @@ And we modify `build.gradle` to define a varaible to save the `suppressions.xml`
         ...
     }
 
-Then we use `checkstyleSuppressionPath` in `rules.xml` so `rules.xml` can know where to find the `SuppressionFilter`:
+Then use `checkstyleSuppressionPath` in `rules.xml` so `rules.xml` can know where to find the `SuppressionFilter`:
 
     <property name="fileExtensions" value="java, properties, xml"/>
 
@@ -180,7 +185,7 @@ Then we use `checkstyleSuppressionPath` in `rules.xml` so `rules.xml` can know w
         <property name="file" value="${checkstyleSuppressionPath}"/>
     </module>
 
-Run `./gradlew checkstyle` again, now just remain the file we really care about:
+Run `./gradlew checkstyle` again and the auto-generated files are now ignored:
 
     > ./gradlew checkstyle
     Incremental java compilation is an incubating feature.
@@ -191,7 +196,7 @@ Run `./gradlew checkstyle` again, now just remain the file we really care about:
 
     FAILURE: Build failed with an exception.
 
-We write some bad style code to check whether other rules work:
+Check that it's working by writing some poorly styled code:
 
     private void TestCheckStyle()
     throws RuntimeException
@@ -217,21 +222,23 @@ We write some bad style code to check whether other rules work:
 
     FAILURE: Build failed with an exception.
 
-### Step 5 - Check before Launch
+### Step 5 - Check before launch
 
-We set do the code style check before launch the app, open setting from 'Build -> Edit Configurations...', in the below of page, 'Before Launch' option, click the plus icon, select 'Gradle-aware Make' type, in the popup dialog, input ':app:checkstyle' task.
+Set the code style check to run before launching the app:
+
+Open settings from 'Build -> Edit Configurations...' (see below) 'Before Launch' option, click the plus icon, select 'Gradle-aware Make' type in the popup dialog and input ':app:checkstyle' task.
 
 ![](./art/3_config_check_before_launch.png)
 
-After that, when you click 'Run' button, it will failed if code style check failed:
+After that, when you click 'Run' button, it will fail if the code style check fails:
 
 ![](./art/4_check_before_launch.png)
 
 ### Step 6 - Check before Commit
 
-We force that it must pass the code style check before commit the code to git repo. We use the git 'pre-commit' hook. Git will run 'pre-commit' hook if it exists before really commit the code, so we can run the `./gradlew checkstyle` in the 'pre-commit' hook.
+In order to prevent poorly styled code from going into Git you can use a 'pre-commit' hook.
 
-The git has already prepared a 'pre-commit' script sample for us in '.git/hooks/pre-commit.sample', we just need to rename it to 'pre-commit', and insert our code to it, after its first paragraph code except comment:
+Here is a sample 'pre-commit' hook that will check the style before code goes into git:
 
     # origin code
     if git rev-parse --verify HEAD >/dev/null 2>&1
@@ -252,7 +259,7 @@ The git has already prepared a 'pre-commit' script sample for us in '.git/hooks/
         exit 1
     fi
 
-Then if you want to commit some bad style code, it will failed:
+Then if you want to commit some poorly styled code, it will fail:
 
     > git commit -a -m 'test to commit the bad style code'
     Incremental java compilation is an incubating feature.
@@ -284,4 +291,4 @@ Fix it:
     [master 5cc5f3b] fix the bad code style
     1 file changed, 5 insertions(+), 6 deletions(-)
 
-That's all. You can continue to modify the rules in `rules.xml` to adjust your really need.
+That's all. You can continue to modify the rules in `rules.xml` to adjust to your needs.
