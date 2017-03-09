@@ -222,19 +222,7 @@ Check that it's working by writing some poorly styled code:
 
     FAILURE: Build failed with an exception.
 
-### Step 5 - Check before launch
-
-Set the code style check to run before launching the app:
-
-Open settings from 'Build -> Edit Configurations...' (see below) 'Before Launch' option, click the plus icon, select 'Gradle-aware Make' type in the popup dialog and input ':app:checkstyle' task.
-
-![](./art/3_config_check_before_launch.png)
-
-After that, when you click 'Run' button, it will fail if the code style check fails:
-
-![](./art/4_check_before_launch.png)
-
-### Step 6 - Check before Commit
+### Step 5 - Check before Commit
 
 In order to prevent poorly styled code from going into Git you can use a 'pre-commit' hook.
 
